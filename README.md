@@ -1,2 +1,2 @@
 # vock
-Une application décentralisée de votes utilisant la blockchain Ethereum.
+Une application décentralisée de vote en ligne utilisant la blockchain Filparty.
