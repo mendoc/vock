@@ -13,7 +13,14 @@ contract Vock {
         EnCours, // Lorsque l'élection est lancée. Il n'est plus possible d'enregistrer des candidats
         Termine //  Lorsque l'élection est terminée. Plus personne ne peut voter.
     }
-
+    
+    // événement pour l'enregistrement des candidats
+    
+    event AjouterCandidat(address indexed admin, uint256 idElec,uint256 idCand,string candidat);
+    event CreerElection(address indexed admin,uint256 idElection);
+    event Enregistrer(address indexed electeur,uint256 idElection);
+    event Autoriser(address indexed admin,address indexed electeur,uint256 idElection);
+    event Lancer(address indexed admin,uint256 idElection);
     // La structure représentant un candidat
     struct Candidat {
         string nom; //         Le nom du candidat
@@ -78,6 +85,8 @@ contract Vock {
         );
         elections[_idElec].statut = Statut.Cree;
         elections[_idElec].auteur = msg.sender;
+
+        emit CreerElection(msg.sender,_idElec);
     }
 
     /**
@@ -90,6 +99,8 @@ contract Vock {
             "Electeur deja enregistre"
         );
         elections[_idElec].electeurs[msg.sender].estEnregistre = true;
+
+        emit Enregistrer(msg.sender,_idElec);
     }
 
     /**
@@ -111,6 +122,8 @@ contract Vock {
             "Ce compte peut deja voter"
         );
         elections[_idElec].electeurs[_elect].peutVoter = true;
+
+        emit Autoriser(msg.sender,_elect,_idElec);
     }
 
     /**
@@ -131,6 +144,8 @@ contract Vock {
         elections[_idElec].candidats[_idCand].nom = _nomCand;
         elections[_idElec].candidats[_idCand].estEnregistre = true;
         elections[_idElec].candidats[_idCand].nbreVotes = 0;
+
+        emit AjouterCandidat(msg.sender,_idElec,_idCand,_nomCand);
     }
 
     /**
@@ -140,6 +155,8 @@ contract Vock {
     function lancerElection(uint256 _idElec) electionCreee(_idElec) auteurSeulement(_idElec) public{
         elections[_idElec].statut = Statut.EnCours;
         elections[_idElec].totalVotes = 0;
+
+        emit Lancer(msg.sender,_idElec);
     }
 
     /**
@@ -170,6 +187,8 @@ contract Vock {
         elections[_idElec].electeurs[msg.sender].vote = _idCand;
         elections[_idElec].candidats[_idCand].nbreVotes += 1;
         elections[_idElec].totalVotes += 1;
+
+        
     }
 
     /**
